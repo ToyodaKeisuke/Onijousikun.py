@@ -46,8 +46,6 @@ class JsonReadAndWrite():
         Config.monitor_app_save_data_file = open(Config.MONITOR_APP_SAVEDATA_PATH,'r',encoding='utf-8')
         #リストにする
         Config.monitor_app_save_data = json.load(Config.monitor_app_save_data_file)
-        print(Config.monitor_app_save_data)
-        print('#######')
         #nthでn番目という意味になる
         Config.nth = 0
         #表示
@@ -357,8 +355,8 @@ class EditMonitor():
         Config.new_settings_do_mindful_within_30_seconds_check_button_data = Config.new_settings_do_mindful_within_30_seconds_check_button_bool.get()
         Config.new_settings_do_forced_end_app_check_button_data = Config.new_settings_do_forced_end_app_check_button_bool.get()
         self.ProgressVar()
-        self.IsAddMonitorTextBoxDataNormal()
-    def IsAddMonitorTextBoxDataNormal(self,):
+        self.IsEditMonitorTextBoxDataNormal()
+    def IsEditMonitorTextBoxDataNormal(self,):
         #進捗バー30
         Config.edit_monitor_progress_ber.configure(value=30)
         Config.edit_monitor_progress_ber.update()
@@ -393,7 +391,7 @@ class EditMonitor():
     def IsPingNormal(self,):
         self.is_int_only = False
         #IPアドレスか
-        for i in Config.new_edit_monitor_text_box_data:
+        for i in Config.edit_monitor_text_box_data:
             if i != '0' or i != '1' or i != '2' or i != '3' or i != '4' or i != '5' or i != '6' or i != '7' or i != '8' or i != '9' or i != '.':
                 self.is_int_only = False
                 break
@@ -401,7 +399,7 @@ class EditMonitor():
                 self.is_int_only = True
         #pingは正常か
         #ipとwwwは分ける必要がない(pingの時にwwwだと自動的にIPに変換してくれる)
-        self.is_ping_normal = subprocess.run(['ping',Config.new_edit_monitor_text_box_data,'-n','1'],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        self.is_ping_normal = subprocess.run(['ping',Config.edit_monitor_text_box_data,'-n','1'],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         #進捗バー60
         Config.edit_monitor_progress_ber.configure(value=60)
         Config.edit_monitor_progress_ber.update()
@@ -477,6 +475,8 @@ class EditMonitor():
         Config.monitor_app_save_deta_tags = str(Config.monitor_app_save_deta_tags)
         Config.monitor_app_save_deta_tags = Config.monitor_app_save_deta_tags.strip('[')
         Config.monitor_app_save_deta_tags = Config.monitor_app_save_deta_tags.strip(']')
+        #
+        print(Config.monitor_app_save_deta_tags)
         #
         Config.monitor_app_save_data[Config.monitor_app_save_deta_tags] = {'path':Config.edit_monitor_text_box_data,'settings':Config.monitor_app_settings_save_data}
         
