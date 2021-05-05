@@ -601,6 +601,7 @@ class AddMonitor():
         #json読み込み
         Config.json_read_and_write_instance = JsonReadAndWrite()
         Config.json_read_and_write_instance.MonitorAppSaveDataRead()
+        print(Config.monitor_app_save_data)
         #データに入力されたものを加える
         #チェックボックスを数値化
         i = 0
