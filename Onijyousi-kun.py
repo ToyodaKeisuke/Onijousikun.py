@@ -45,6 +45,7 @@ class JsonReadAndWrite():
         #jsonfile読み込み
         Config.monitor_app_save_data_file = open(Config.MONITOR_APP_SAVEDATA_PATH,'r',encoding='utf-8')
         #リストにする
+        Config.monitor_app_save_data = None
         Config.monitor_app_save_data = json.load(Config.monitor_app_save_data_file)
         #nthでn番目という意味になる
         Config.nth = 0
@@ -165,6 +166,7 @@ class MainScreen(MainWindow):
         Config.main_window_label.pack()
     def MainFrame(self,):
         self.MainFrameTreeView()
+        self.MainFrameTreeviewUpdate()
         self.MainFrameAngerLevelFrame()
         self.MainFrameIsMonitor()
     def OnMainFrameTreeView(self,event_name):
@@ -198,8 +200,12 @@ class MainScreen(MainWindow):
         Config.main_frame_tree_view_scroll_bar_y = tk.Scrollbar(Config.main_tree_view_frame,orient=tk.VERTICAL,command=Config.main_frame_tree_view.yview)
         Config.main_frame_tree_view.configure(yscrollcommand=Config.main_frame_tree_view_scroll_bar_y.set)
         Config.main_frame_tree_view_scroll_bar_y.grid(row=1, column=2, sticky='nsew')
-        self.MainFrameTreeviewUpdate()
     def MainFrameTreeviewUpdate(self,):
+        #ツリービューをいったん消す(アップデートするときに前のデータが残らないようにするため)
+        Config.main_frame_tree_view.pack_forget()
+        #ツリービュー作成
+        self.MainFrameTreeView()
+        #
         self.read_data = Config.json_read_and_write_instance.MonitorAppSaveDataRead()
         for read_data in self.read_data:#ジェネレータオブジェクトのためfor文で回転させる
             #ツリービューに出力
@@ -263,11 +269,11 @@ class EditMonitorSettingsScreen(EditMonitorSettingsWindow):
         Config.edit_monitor_settings_main_frame.propagate(0)
         Config.edit_monitor_settings_main_frame.pack()
         #データ取得(選択しているところの)
-        Config.monitor_app_save_data = Config.main_frame_tree_view.selection()[0]
-        Config.monitor_app_save_deta_tags = Config.main_frame_tree_view.item(Config.monitor_app_save_data)['tags']
-        Config.monitor_app_save_data = Config.main_frame_tree_view.item(Config.monitor_app_save_data)['values']
+        self.monitor_app_save_data = Config.main_frame_tree_view.selection()[0]
+        Config.monitor_app_save_deta_tags = Config.main_frame_tree_view.item(self.monitor_app_save_data)['tags']
+        self.monitor_app_save_data = Config.main_frame_tree_view.item(self.monitor_app_save_data)['values']
         #settings項目をリスト化
-        Config.monitor_app_settings_save_data = Config.monitor_app_save_data[1].split(',')
+        Config.monitor_app_settings_save_data = self.monitor_app_save_data[1].split(',')
         #数値化
         Config.monitor_app_settings_save_data = list(map(int,Config.monitor_app_settings_save_data))
         #メインフレーム描画
@@ -281,7 +287,7 @@ class EditMonitorSettingsScreen(EditMonitorSettingsWindow):
         Config.what_is_new_monitor_app_text.place(x=0,y=0)
         Config.what_is_new_monitor_app_text_box = tk.Entry(Config.edit_monitor_settings_main_frame,font=(u'游ゴシック',12,'bold'))
         #テキストボックスに入れる
-        Config.what_is_new_monitor_app_text_box.insert(tk.END,Config.monitor_app_save_data[0])
+        Config.what_is_new_monitor_app_text_box.insert(tk.END,self.monitor_app_save_data[0])
         #
         Config.what_is_new_monitor_app_text_box.place(x=0,y=20,width=290,height=40)
     def WhatIsNewMonitorSettingsTextFrame(self,):
@@ -342,6 +348,10 @@ class EditMonitorSettingsScreen(EditMonitorSettingsWindow):
                 l += 1
         #書き込み
         Config.json_read_and_write_instance.MonitorAppDataWrite(Config.tamp_monitor_app_save_data)
+        #ツリービュー更新
+        Config.main_screen_instance.MainFrameTreeviewUpdate()
+        #ダイアログ
+        mbox.showinfo('削除完了','削除しました')
         
         
 class EditMonitor():
@@ -476,10 +486,12 @@ class EditMonitor():
         Config.monitor_app_save_deta_tags = Config.monitor_app_save_deta_tags.strip('[')
         Config.monitor_app_save_deta_tags = Config.monitor_app_save_deta_tags.strip(']')
         #
-        print(Config.monitor_app_save_deta_tags)
-        #
+        print(Config.monitor_app_save_data)
         Config.monitor_app_save_data[Config.monitor_app_save_deta_tags] = {'path':Config.edit_monitor_text_box_data,'settings':Config.monitor_app_settings_save_data}
-        
+        #ツリービュー更新
+        Config.main_screen_instance.MainFrameTreeviewUpdate()
+        #ダイアログ
+        mbox.showinfo('編集完了','編集しました')
 
 
 class AddMonitor():
@@ -601,7 +613,6 @@ class AddMonitor():
         #json読み込み
         Config.json_read_and_write_instance = JsonReadAndWrite()
         Config.json_read_and_write_instance.MonitorAppSaveDataRead()
-        print(Config.monitor_app_save_data)
         #データに入力されたものを加える
         #チェックボックスを数値化
         i = 0
@@ -613,12 +624,16 @@ class AddMonitor():
         #ファイルパスかIPか
         Config.monitor_app_settings_data.append(4) if Config.is_file_path == True else Config.monitor_app_settings_data.append(5)
         #
-        Config.monitor_app_save_data[Config.nth+1] = {'path':Config.add_monitor_text_box_data,'settings':Config.monitor_app_settings_data}
+        #Config.monitor_app_save_data[Config.nth+1] = {'path':Config.add_monitor_text_box_data,'settings':Config.monitor_app_settings_data}
+        Config.monitor_app_save_data[len(Config.monitor_app_save_data)] = {'path':Config.add_monitor_text_box_data,'settings':Config.monitor_app_settings_data}
         #書き込み
         Config.json_read_and_write_instance.MonitorAppDataWrite(Config.monitor_app_save_data)
         #進捗バー100
         Config.add_monitor_progress_ber.configure(value=100)
         Config.add_monitor_progress_ber.update()
+        #
+        #ツリービュー更新
+        Config.main_screen_instance.MainFrameTreeviewUpdate()
         #通知する
         mbox.showinfo('保存完了','保存しました。')
         #ウィンドウ削除
