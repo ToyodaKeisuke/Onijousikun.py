@@ -22,5 +22,21 @@
             1,
             4
         ]
+    },
+    "3": {
+        "path": "C:\\Users\\keisu\\Desktop\\Python\\Tetris.py\\Tetris.py",
+        "settings": [
+            0,
+            1,
+            2,
+            4
+        ]
+    },
+    "4": {
+        "path": "C:\\Users\\keisu\\Desktop\\Python\\Tetris.py\\Tetris.py",
+        "settings": [
+            3,
+            4
+        ]
     }
 }

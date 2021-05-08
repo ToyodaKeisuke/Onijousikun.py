@@ -584,7 +584,7 @@ class AddMonitor():
     def IsCheckBoxNormal(self,):
         Config.check_box_is_normal = False
         #
-        for check_box_data in [Config.do_monitor_check_button_data,Config.do_mindful_check_button_data,Config.do_forced_end_app_check_button_data]:
+        for check_box_data in [Config.do_monitor_check_button_data,Config.do_mindful_check_button_data,Config.do_mindful_within_30_seconds_check_button_data,Config.do_forced_end_app_check_button_data]:
             if check_box_data:
                 Config.check_box_is_normal = True
             else:
@@ -597,7 +597,7 @@ class AddMonitor():
         else:
             pass
     def ProgressVar(self,):
-        #ウィンドウ
+        #ウィンドウ,
         Config.add_monitor_progress_ber_window = tk.Toplevel(Config.add_monitor_window)
         Config.add_monitor_progress_ber_window.title('保存の進捗状況')
         Config.add_monitor_progress_ber_window.geometry('100x50')
@@ -617,7 +617,7 @@ class AddMonitor():
         #チェックボックスを数値化
         i = 0
         Config.monitor_app_settings_data = []
-        for check_box_data in [Config.add_monitor_text_box_data,Config.do_monitor_check_button_data,Config.do_mindful_check_button_data,Config.do_forced_end_app_check_button_data]:
+        for check_box_data in [Config.do_monitor_check_button_data,Config.do_mindful_check_button_data,Config.do_mindful_within_30_seconds_check_button_data,Config.do_forced_end_app_check_button_data]:
             if check_box_data:
                 Config.monitor_app_settings_data.append(i)
             i += 1
