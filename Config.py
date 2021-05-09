@@ -97,3 +97,7 @@ new_do_mindful_within_30_seconds_check_button_data = None
 new_do_forced_end_app_check_button_data = None
 edit_monitor_progress_ber = None
 save_edit_monitor_threading = None
+new_settings_do_monitor_check_button_data = None
+new_settings_do_mindful_check_button_data = None
+new_settings_do_mindful_within_30_seconds_check_button_data = None
+new_settings_do_forced_end_app_check_button_data = None

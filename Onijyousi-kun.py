@@ -273,7 +273,7 @@ class EditMonitorSettingsScreen(EditMonitorSettingsWindow):
         Config.monitor_app_save_deta_tags = Config.main_frame_tree_view.item(self.monitor_app_save_data)['tags']
         self.monitor_app_save_data = Config.main_frame_tree_view.item(self.monitor_app_save_data)['values']
         #settings項目をリスト化
-        Config.monitor_app_settings_save_data = self.monitor_app_save_data[1].split(',')
+        Config.monitor_app_settings_save_data = str(self.monitor_app_save_data[1]).split(',')
         #数値化
         Config.monitor_app_settings_save_data = list(map(int,Config.monitor_app_settings_save_data))
         #メインフレーム描画
@@ -360,7 +360,7 @@ class EditMonitor():
         #監視対象追加処理の進み具合の変数
         Config.edit_monitor_process_progress_progress_progress = 0
         Config.edit_monitor_text_box_data = Config.what_is_new_monitor_app_text_box.get()
-        Config.new_settings_do_monitor_check_button_bool = Config.new_settings_do_monitor_check_button_bool.get()
+        Config.new_settings_do_monitor_check_button_data = Config.new_settings_do_monitor_check_button_bool.get()
         Config.new_settings_do_mindful_check_button_data = Config.new_settings_do_mindful_check_button_bool.get()
         Config.new_settings_do_mindful_within_30_seconds_check_button_data = Config.new_settings_do_mindful_within_30_seconds_check_button_bool.get()
         Config.new_settings_do_forced_end_app_check_button_data = Config.new_settings_do_forced_end_app_check_button_bool.get()
@@ -446,7 +446,7 @@ class EditMonitor():
     def IsCheckBoxNormal(self,):
         self.check_box_is_normal = False
         #
-        for check_box_data in [Config.new_settings_do_monitor_check_button_bool,Config.new_settings_do_mindful_check_button_data,Config.new_settings_do_forced_end_app_check_button_data,Config.new_settings_do_mindful_within_30_seconds_check_button_data]:
+        for check_box_data in [Config.new_settings_do_monitor_check_button_data,Config.new_settings_do_mindful_check_button_data,Config.new_settings_do_forced_end_app_check_button_data,Config.new_settings_do_mindful_within_30_seconds_check_button_data]:
             if check_box_data:
                 self.check_box_is_normal = True
             else:
@@ -476,6 +476,15 @@ class EditMonitor():
         Config.json_read_and_write_instance = JsonReadAndWrite()
         #読み込み＆編集
         Config.json_read_and_write_instance.MonitorAppSaveDataRead()
+        #チェックボックスをリスト化
+        i = 0
+        Config.monitor_app_settings_save_data = []
+        for check_box_data in [Config.new_settings_do_monitor_check_button_data,Config.new_settings_do_mindful_check_button_data,Config.new_settings_do_mindful_within_30_seconds_check_button_data,Config.new_settings_do_forced_end_app_check_button_data]:
+            if check_box_data:
+                Config.monitor_app_settings_save_data.append(i)
+            else:
+                pass
+            i += 1
         #テキストボックスに入っているのがファイルパスなら4,ではないなら5を入れる
         if self.is_file_path == True:
             Config.monitor_app_settings_save_data.append(4)
@@ -486,10 +495,13 @@ class EditMonitor():
         Config.monitor_app_save_deta_tags = Config.monitor_app_save_deta_tags.strip('[')
         Config.monitor_app_save_deta_tags = Config.monitor_app_save_deta_tags.strip(']')
         #
-        print(Config.monitor_app_save_data)
         Config.monitor_app_save_data[Config.monitor_app_save_deta_tags] = {'path':Config.edit_monitor_text_box_data,'settings':Config.monitor_app_settings_save_data}
+        #保存
+        Config.json_read_and_write_instance.MonitorAppDataWrite(Config.monitor_app_save_data)
         #ツリービュー更新
         Config.main_screen_instance.MainFrameTreeviewUpdate()
+        #ウィンドウ削除
+        Config.edit_monitor_settings_window.destroy()
         #ダイアログ
         mbox.showinfo('編集完了','編集しました')
 
@@ -623,7 +635,6 @@ class AddMonitor():
             i += 1
         #ファイルパスかIPか
         Config.monitor_app_settings_data.append(4) if Config.is_file_path == True else Config.monitor_app_settings_data.append(5)
-        #
         #Config.monitor_app_save_data[Config.nth+1] = {'path':Config.add_monitor_text_box_data,'settings':Config.monitor_app_settings_data}
         Config.monitor_app_save_data[len(Config.monitor_app_save_data)] = {'path':Config.add_monitor_text_box_data,'settings':Config.monitor_app_settings_data}
         #書き込み
@@ -631,13 +642,12 @@ class AddMonitor():
         #進捗バー100
         Config.add_monitor_progress_ber.configure(value=100)
         Config.add_monitor_progress_ber.update()
-        #
         #ツリービュー更新
         Config.main_screen_instance.MainFrameTreeviewUpdate()
-        #通知する
-        mbox.showinfo('保存完了','保存しました。')
         #ウィンドウ削除
         Config.add_monitor_window.destroy()
+        #通知する
+        mbox.showinfo('保存完了','保存しました。')
 class DoMonitorIP():
     def __init__(self,):
         pass
