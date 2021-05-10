@@ -155,8 +155,14 @@ class AddMonitorScreen(AddMonitorWindow):
     def DeterminationSettingsSaveButtons(self,):
         Config.determination_save_settings_button = tk.Button(Config.add_monitor_main_frame,text='保存',font=(u'游ゴシック',10,'bold'),fg=Config.THIRD_COLOR,bg=Config.SECOAND_COLOR,width=16,height=2,command=AddMonitor)
         Config.determination_save_settings_button.place(x=150,y=193)
-        Config.do_not_determination_save_settings_button = tk.Button(Config.add_monitor_main_frame,text='保存しない',font=(u'游ゴシック',10,'bold'),fg=Config.THIRD_COLOR,bg=Config.SECOAND_COLOR,width=16,height=2)
+        Config.do_not_determination_save_settings_button = tk.Button(Config.add_monitor_main_frame,text='保存しない',font=(u'游ゴシック',10,'bold'),fg=Config.THIRD_COLOR,bg=Config.SECOAND_COLOR,width=16,height=2,command=self.DonotDeterminationSettingsSave)
         Config.do_not_determination_save_settings_button.place(x=2,y=193)
+    def DonotDeterminationSettingsSave(self,):
+        if mbox.askyesno('確認','本当に保存しなくていいですか?'):
+            #ウィンドウ削除
+            Config.add_monitor_window.destroy()
+        else:
+            pass
 class MainScreen(MainWindow):
     def __init__(self,):
         Config.main_window_frame = tk.Frame(Config.main_window,height=240,width=400,bd=5,relief='ridge')
@@ -239,6 +245,7 @@ class MainScreen(MainWindow):
         Config.main_screen_menu_ber.add_command(label='監視対象を追加する',command=self.MainScreenAddMonitorMenuCommand)
     def MainScreenAddMonitorMenuCommand(self,):
         self.add_monitor_window_instance = AddMonitorWindow()
+        
         
 class EditMonitorSettingsWindow(object):
     def __init__(self,):
@@ -350,6 +357,8 @@ class EditMonitorSettingsScreen(EditMonitorSettingsWindow):
         Config.json_read_and_write_instance.MonitorAppDataWrite(Config.tamp_monitor_app_save_data)
         #ツリービュー更新
         Config.main_screen_instance.MainFrameTreeviewUpdate()
+        #ウィンドウを閉じる
+        Config.edit_monitor_settings_window.destroy()
         #ダイアログ
         mbox.showinfo('削除完了','削除しました')
         
