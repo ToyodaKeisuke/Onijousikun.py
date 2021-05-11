@@ -657,9 +657,13 @@ class AddMonitor():
         Config.add_monitor_window.destroy()
         #通知する
         mbox.showinfo('保存完了','保存しました。')
-class DoMonitorIP():
+class DoMonitor():
     def __init__(self,):
         pass
+    def MonitorIP(self,):
+        pass
+    def MonitorFilePath(self,):
+        subprocess.run(['tasklist'],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 if __name__ == '__main__':
     main_window_instance = MainWindow()
     Config.main_screen_instance = MainScreen()
