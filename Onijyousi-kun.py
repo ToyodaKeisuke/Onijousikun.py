@@ -662,7 +662,7 @@ class DoMonitor():
         pass
     def MonitorIP(self,):
         pass
-    def MonitorFilePath(self,):
+    def MonitorFile(self,):
         subprocess.run(['tasklist'],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 if __name__ == '__main__':
     main_window_instance = MainWindow()
