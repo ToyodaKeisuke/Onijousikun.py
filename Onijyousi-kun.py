@@ -662,8 +662,20 @@ class DoMonitor():
         pass
     def MonitorIP(self,):
         pass
-    def MonitorFile(self,):
-        subprocess.run(['tasklist'],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+    def MonitorFile(self,path_name):
+        self.path_name = path_name
+        self.app_name = r'{}'.format(self.path_name).split('\\')
+        self.app_name = self.app_name[-1]
+        self.is_monitor_file_normal = subprocess.run(['wmic','process','where','\'name="{}"\''.format(self.app_name),'get','commandline'],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        self.is_monitor_file_normal = self.is_monitor_file_normal.stdout.decode('cp932')
+        if '利用できるインスタンスがありません。' in self.is_monitor_file_normal:
+            pass
+        else:
+            if self.path_name in self.is_monitor_file_normal:
+                #監視対象が起動しているので処理をする。
+                pass
+            else:
+                pass
 if __name__ == '__main__':
     main_window_instance = MainWindow()
     Config.main_screen_instance = MainScreen()
