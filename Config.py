@@ -101,3 +101,4 @@ new_settings_do_monitor_check_button_data = None
 new_settings_do_mindful_check_button_data = None
 new_settings_do_mindful_within_30_seconds_check_button_data = None
 new_settings_do_forced_end_app_check_button_data = None
+monitor_check_button_bool_list_for_monitoring = None

@@ -672,10 +672,20 @@ class DoMonitor():
             pass
         else:
             if self.path_name in self.is_monitor_file_normal:
-                #監視対象が起動しているので処理をする。
-                pass
+                #監視対象が起動時の処理をする。
+                self.GetMonitorData()
             else:
                 pass
+    def GetMonitorData(self,monitor_number):
+        #監視するときチェックボタンがどれを押していたのか確認する
+        Config.monitor_check_button_bool_list_for_monitoring = []
+        self.read_data = Config.json_read_and_write_instance.MonitorAppSaveDataRead()
+        for check_button_read_data in self.read_data:
+            if check_button_read_data[1]:
+                Config.monitor_check_button_bool_list_for_monitoring.append(True)
+            else:
+                Config.monitor_check_button_bool_list_for_monitoring.append(False)
+        return Config.monitor_check_button_bool_list_for_monitoring
 if __name__ == '__main__':
     main_window_instance = MainWindow()
     Config.main_screen_instance = MainScreen()
