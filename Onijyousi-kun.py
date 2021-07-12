@@ -671,21 +671,37 @@ class DoMonitor():
         if '利用できるインスタンスがありません。' in self.is_monitor_file_normal:
             pass
         else:
+            #もしcmdにパスがはいっていたら(起動していたら)
             if self.path_name in self.is_monitor_file_normal:
                 #監視対象が起動時の処理をする。
-                self.GetMonitorData()
+                #監視のオプションを確認
+                Config.monitor_target_option_data = self.GetMonitorOptionData()
+                #そのファイルは監視対象か(オプションで監視するにチェックが入れてあるか)
+                if self.IsfileMonitorTarget() == 'NotMonitorTarget':
+                    return 0;
+                else:
+                    pass
             else:
                 pass
-    def GetMonitorData(self,monitor_number):
-        #監視するときチェックボタンがどれを押していたのか確認する
-        Config.monitor_check_button_bool_list_for_monitoring = []
+    def GetMonitorTargetOptionData(self,monitor_number):
+        #monitor_numberは0から始まる
+        #監視オプションをチェック
+        Config.monitor_target_option_data = []
         self.read_data = Config.json_read_and_write_instance.MonitorAppSaveDataRead()
-        for check_button_read_data in self.read_data:
-            if check_button_read_data[1]:
-                Config.monitor_check_button_bool_list_for_monitoring.append(True)
+        self.i = 0
+        for monitor_terget_option_read_data in self.read_data:
+            if self.i == monitor_number:
+                Config.monitor_target_option_data = monitor_terget_option_read_data
             else:
-                Config.monitor_check_button_bool_list_for_monitoring.append(False)
-        return Config.monitor_check_button_bool_list_for_monitoring
+                self.i += 1
+        return Config.monitor_target_option_data#監視オプションを返す
+    def IsfileMonitorTarget():
+        #そもそもオプションで監視対象指定されているのか
+        #されていない
+        if not 0 in Config.monitor_target_option_data['settings']:
+            return 'NotMonitorTarget';
+        else:
+            pass
 if __name__ == '__main__':
     main_window_instance = MainWindow()
     Config.main_screen_instance = MainScreen()
