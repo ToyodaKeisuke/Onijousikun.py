@@ -680,17 +680,19 @@ class DoMonitor():
                 if self.IsfileMonitorTarget() == 'NotMonitorTarget':
                     return 0;
                 else:
-                    pass
+                    if 1 in Config.monitor_target_option_data:#違反したら通知ボックスで警告
+                        self.DoMindful()
             else:
                 pass
     def GetMonitorTargetOptionData(self,monitor_number):
+        self.monitor_number = monitor_number
         #monitor_numberは0から始まる
         #監視オプションをチェック
         Config.monitor_target_option_data = []
         self.read_data = Config.json_read_and_write_instance.MonitorAppSaveDataRead()
         self.i = 0
         for monitor_terget_option_read_data in self.read_data:
-            if self.i == monitor_number:
+            if self.i == self.monitor_number:
                 Config.monitor_target_option_data = monitor_terget_option_read_data
             else:
                 self.i += 1
@@ -700,6 +702,13 @@ class DoMonitor():
         #されていない
         if not 0 in Config.monitor_target_option_data['settings']:
             return 'NotMonitorTarget';
+        else:
+            pass
+    def DoMindful(self,):
+        #警告ボックスを出す
+        if mbox.askyesno('鬼上司くん-警告','登録されているアプリが開かれました。終了しますか?'):
+            #もしyesなら
+            pass
         else:
             pass
 if __name__ == '__main__':
