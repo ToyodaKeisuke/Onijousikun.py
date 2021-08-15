@@ -668,6 +668,7 @@ class DoMonitor():
         self.app_name = self.app_name[-1]
         self.is_monitor_file_normal = subprocess.run(['wmic','process','where','\'name="{}"\''.format(self.app_name),'get','commandline'],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         self.is_monitor_file_normal = self.is_monitor_file_normal.stdout.decode('cp932')
+        print(self.is_monitor_file_normal)
         if '利用できるインスタンスがありません。' in self.is_monitor_file_normal:
             pass
         else:
@@ -675,13 +676,20 @@ class DoMonitor():
             if self.path_name in self.is_monitor_file_normal:
                 #監視対象が起動時の処理をする。
                 #監視のオプションを確認
-                Config.monitor_target_option_data = self.GetMonitorOptionData()
+                Config.monitor_target_option_data = self.GetMonitorOptionData(1)
                 #そのファイルは監視対象か(オプションで監視するにチェックが入れてあるか)
                 if self.IsfileMonitorTarget() == 'NotMonitorTarget':
                     return 0;
                 else:
                     if 1 in Config.monitor_target_option_data:#違反したら通知ボックスで警告
                         self.DoMindful()
+                    if 2 in Config.monitor_target_option_data:
+                        if 1 in Config.monitor_target_option_data:#もし30秒後に警告とすぐに警告両方がオプションに含まれていたらこっちは無効化
+                            pass
+                        else:
+                            self.DoMindfulWithin30Seconds()
+                    if 3 in Config.monitor_target_option_data:
+                        self.DoForcedEndApp()
             else:
                 pass
     def GetMonitorTargetOptionData(self,monitor_number):
@@ -707,14 +715,28 @@ class DoMonitor():
     def DoMindful(self,):
         #警告ボックスを出す
         if mbox.askyesno('鬼上司くん-警告','登録されているアプリが開かれました。終了しますか?'):
-            #もしyesなら
-            pass
+            #もしyesならアプリを終了
+            subprocess.run(['taskkill','/F','/IM',str(self.app_name)],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         else:
             pass
+    def DoMindfulWithin30Seconds(self,):
+        #警告ボックス
+        if mbox.askyesno('鬼上司くん-警告','登録されているアプリが開かれてから30秒が経ちました。終了しますか?'):
+            #もしyesならアプリを終了
+            subprocess.run(['taskkill','/F','/IM',str(self.app_name)],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        else:
+            pass
+    def DoForcedEndApp(self,):
+        #強制終了
+        subprocess.run(['taskkill','/F','/IM',str(self.app_name)],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        #報告
+        mbox.showinfo('鬼上司くん','登録されているアプリを起動したので強制終了しました。')
 if __name__ == '__main__':
     main_window_instance = MainWindow()
     Config.main_screen_instance = MainScreen()
     Config.main_screen_instance.MainFrame()
     Config.main_screen_instance.MainScreenMenuber()
+    a = DoMonitor() 
+    a.MonitorFile("C:\Program Files\Google\Chrome\Application\chrome.exe")
     Config.main_window.mainloop()
     
